@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CS412 Cryptography Lab</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo">
+    <span>CryptoLab</span>
+
+  </div>
+  <nav class="nav-tabs">
+    <button class="nav-tab active" onclick="showPanel('home')">Home</button>
+    <button class="nav-tab" onclick="showPanel('classical')">Classical</button>
+    <button class="nav-tab" onclick="showPanel('transposition')">Transposition</button>
+    <button class="nav-tab" onclick="showPanel('modern')">Modern</button>
+    <button class="nav-tab" onclick="showPanel('asymmetric')">RSA</button>
+  </nav>
+</header>
+
+<main class="main">
+
+  <!-- HOME PANEL -->
+  <div class="panel active" id="panel-home">
+    <div class="hero">
+      <h1>Cryptography<br><span>Lab </span></h1>
+      <p>Interactive implementations of classical and modern ciphers.</p>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num">6</div><div class="stat-lbl">Algorithms</div></div>
+        <div class="stat"><div class="stat-num">2</div><div class="stat-lbl">Cipher Types</div></div>
+      </div>
+    </div>
+    <div class="home-grid">
+      <div class="cipher-card home-card" onclick="showPanel('classical')">
+        <div class="cipher-body">
+          <span class="cipher-tag tag-classical">Classical</span>
+          <div class="home-card-title">Caesar &amp; Mono</div>
+          <div class="home-card-desc">Simple substitution ciphers  the foundation of classical cryptography</div>
+        </div>
+      </div>
+      <div class="cipher-card home-card" onclick="showPanel('transposition')">
+        <div class="cipher-body">
+          <span class="cipher-tag tag-classical">Transposition</span>
+          <div class="home-card-title">Row Transposition</div>
+          <div class="home-card-desc">Rearranges plaintext letters using a columnar key</div>
+        </div>
+      </div>
+      <div class="cipher-card home-card" onclick="showPanel('classical')">
+        <div class="cipher-body">
+          <span class="cipher-tag tag-classical">Classical</span>
+          <div class="home-card-title">Playfair</div>
+          <div class="home-card-desc">Digraph substitution using a 5×5 key matrix</div>
+        </div>
+      </div>
+      <div class="cipher-card home-card" onclick="showPanel('modern')">
+        <div class="cipher-body">
+          <span class="cipher-tag tag-stream">Stream / Block</span>
+          <div class="home-card-title">RC4 &amp; S-DES</div>
+          <div class="home-card-desc">Modern symmetric encryption algorithms</div>
+        </div>
+      </div>
+      <div class="cipher-card home-card" onclick="showPanel('asymmetric')">
+        <div class="cipher-body">
+          <span class="cipher-tag tag-asymmetric">Asymmetric</span>
+          <div class="home-card-title">RSA</div>
+          <div class="home-card-desc">Public-key cryptography based on integer factorization</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLASSICAL PANEL -->
+  <div class="panel" id="panel-classical">
+
+    <!-- Caesar Cipher -->
+    <div class="cipher-card">
+      <div class="cipher-header">
+        <div class="cipher-title-group">
+          <div class="cipher-name">Caesar Cipher</div>
+          <div class="cipher-desc">Each letter in the plaintext is shifted a fixed number of positions down the alphabet.<br>
+            E(x) = (x + k) mod 26.
+          </div>
+        </div>
+        <span class="cipher-tag tag-classical">Classical</span>
+      </div>
+      <div class="cipher-body">
+        <div class="field-row">
+          <div class="field">
+            <label>Message</label>
+            <input type="text" id="caesar-text" placeholder="ex: hello world">
+          </div>
+          <div class="field">
+            <label>Shift Key (k)</label>
+            <input type="number" id="caesar-key" placeholder="ex: 3">
+          </div>
+        </div>
+      </div>
+      <div class="cipher-actions">
+        <button class="btn btn-encrypt" onclick="caesarEncrypt()">Encrypt</button>
+        <button class="btn btn-decrypt" onclick="caesarDecrypt()">Decrypt</button>
+        <button class="btn btn-clear" onclick="clearCipher('caesar')">Clear</button>
+      </div>
+      <div class="error-msg" id="caesar-err"></div>
+      <div class="result-area">
+        <div class="result-label">
+          <span>Result</span>
+          <button class="copy-btn" onclick="copyResult('caesar-result')">Copy</button>
+        </div>
+        <div class="result-text" id="caesar-result"></div>
+      </div>
+    </div>
+
+    <!-- Monoalphabetic Cipher -->
+    <div class="cipher-card">
+      <div class="cipher-header">
+        <div class="cipher-title-group">
+          <div class="cipher-name">Monoalphabetic Cipher</div>
+          <div class="cipher-desc">Each letter is substituted by a unique mapping defined by a 26-letter key. <br>Key is a permutation of the alphabet. </div>
+        </div>
+        <span class="cipher-tag tag-classical">Classical</span>
+      </div>
+      <div class="cipher-body">
+        <div class="field-row">
+          <div class="field">
+            <label>Message</label>
+            <input type="text" id="mono-text" placeholder="ex: hello">
+          </div>
+          <div class="field">
+            <label>Key (26 unique letters)</label>
+            <input type="text" id="mono-key" placeholder="ex: QWERTYUIOPASDFGHJKLZXCVBNM" maxlength="26">
+          </div>
+        </div>
+      </div>
+      <div class="cipher-actions">
+        <button class="btn btn-encrypt" onclick="monoEncrypt()">Encrypt</button>
+        <button class="btn btn-decrypt" onclick="monoDecrypt()">Decrypt</button>
+        <button class="btn btn-clear" onclick="clearCipher('mono')">Clear</button>
+      </div>
+      <div class="error-msg" id="mono-err"></div>
+      <div class="result-area">
+        <div class="result-label">
+          <span>Result</span>
+          <button class="copy-btn" onclick="copyResult('mono-result')">Copy</button>
+        </div>
+        <div class="result-text" id="mono-result"></div>
+      </div>
+    </div>
+
+    <!-- Playfair Cipher -->
+    <div class="cipher-card">
+      <div class="cipher-header">
+        <div class="cipher-title-group">
+          <div class="cipher-name">Playfair Cipher</div>
+          <div class="cipher-desc">Digraph substitution using a 5×5 key matrix built from a keyword. J is merged with I.</div>
+        </div>
+        <span class="cipher-tag tag-classical">Classical</span>
+      </div>
+      <div class="cipher-body">
+        <div class="field-row">
+          <div class="field">
+            <label>Message</label>
+            <input type="text" id="playfair-text" placeholder="ex: balloon">
+          </div>
+          <div class="field">
+            <label>Keyword</label>
+            <input type="text" id="playfair-key" placeholder="ex: monarchy">
+          </div>
+        </div>
+        <div id="playfair-matrix-area" style="display:none; margin-top:0.5rem;">
+          <div class="sub-label">Key Matrix</div>
+          <div id="playfair-matrix" class="mono-display"></div>
+        </div>
+      </div>
+      <div class="cipher-actions">
+        <button class="btn btn-encrypt" onclick="playfairEncrypt()">Encrypt</button>
+        <button class="btn btn-decrypt" onclick="playfairDecrypt()">Decrypt</button>
+        <button class="btn btn-clear" onclick="clearCipher('playfair')">Clear</button>
+      </div>
+      <div class="error-msg" id="playfair-err"></div>
+      <div class="result-area">
+        <div class="result-label">
+          <span>Result</span>
+          <button class="copy-btn" onclick="copyResult('playfair-result')">Copy</button>
+        </div>
+        <div class="result-text" id="playfair-result"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TRANSPOSITION PANEL -->
+  <div class="panel" id="panel-transposition">
+    <div class="cipher-card">
+      <div class="cipher-header">
+        <div class="cipher-title-group">
+          <div class="cipher-name">Row Transposition Cipher</div>
+          <div class="cipher-desc">Plaintext is written into rows and columns are reordered according to a numeric key. Columns are read in key order to produce ciphertext. </div>
+        </div>
+        <span class="cipher-tag tag-classical">Transposition</span>
+      </div>
+      <div class="cipher-body">
+        <div class="field-row">
+          <div class="field">
+            <label>Message</label>
+            <input type="text" id="transposition-text" placeholder="ex: attack postponed until two am">
+          </div>
+          <div class="field">
+            <label>Key (comma-separated numbers)</label>
+            <input type="text" id="transposition-key" placeholder="ex: 3,1,4,2">
+          </div>
+        </div>
+        <div id="transposition-grid-area" style="display:none; margin-top:0.5rem;">
+          <div class="sub-label">Grid Visualization</div>
+          <div id="transposition-grid" class="mono-display"></div>
+        </div>
+      </div>
+      <div class="cipher-actions">
+        <button class="btn btn-encrypt" onclick="transpositionEncrypt()">Encrypt</button>
+        <button class="btn btn-decrypt" onclick="transpositionDecrypt()">Decrypt</button>
+        <button class="btn btn-clear" onclick="clearCipher('transposition')">Clear</button>
+      </div>
+      <div class="error-msg" id="transposition-err"></div>
+      <div class="result-area">
+        <div class="result-label">
+          <span>Result</span>
+          <button class="copy-btn" onclick="copyResult('transposition-result')">Copy</button>
+        </div>
+        <div class="result-text" id="transposition-result"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODERN PANEL -->
+  <div class="panel" id="panel-modern">
+
+    <!-- RC4 -->
+    <div class="cipher-card">
+      <div class="cipher-header">
+        <div class="cipher-title-group">
+          <div class="cipher-name">RC4 Stream Cipher</div>
+          <div class="cipher-desc">Key-scheduling algorithm (KSA) initializes a 256-byte state array, then PRGA generates a keystream XORed with plaintext. Symmetric same operation encrypts and decrypts.</div>
+        </div>
+        <span class="cipher-tag tag-stream">Stream</span>
+      </div>
+      <div class="cipher-body">
+        <div class="field-row">
+          <div class="field">
+            <label>Message</label>
+            <input type="text" id="rc4-text" placeholder="Enter plaintext or hex ciphertext">
+          </div>
+          <div class="field">
+            <label>Secret Key</label>
+            <input type="text" id="rc4-key" placeholder="ex: secretkey">
+          </div>
+        </div>
+        <div class="hint-text">Note: RC4 output contains non-printable bytes. Result shown as hex string. Paste hex back to decrypt.</div>
+      </div>
+      <div class="cipher-actions">
+        <button class="btn btn-encrypt" onclick="rc4Process(true)">Encrypt To Hex</button>
+        <button class="btn btn-decrypt" onclick="rc4Process(false)">Decrypt from Hex</button>
+        <button class="btn btn-clear" onclick="clearCipher('rc4')">Clear</button>
+      </div>
+      <div class="error-msg" id="rc4-err"></div>
+      <div class="result-area">
+        <div class="result-label">
+          <span>Result</span>
+          <button class="copy-btn" onclick="copyResult('rc4-result')">Copy</button>
+        </div>
+        <div class="result-text" id="rc4-result"></div>
+      </div>
+    </div>
+
+    <!-- S-DES -->
+    <div class="cipher-card">
+      <div class="cipher-header">
+        <div class="cipher-title-group">
+          <div class="cipher-name">Simplified DES (S-DES)</div>
+          <div class="cipher-desc">Educational 8-bit block cipher with a 10-bit key. Uses IP, IP⁻¹, two rounds of Feistel-like fK function, and SW (swap) operations. Sub-keys K1, K2 derived via P10, shift, P8. </div>
+        </div>
+        <span class="cipher-tag tag-block">Block</span>
+      </div>
+      <div class="cipher-body">
+        <div class="field-row">
+          <div class="field">
+            <label>Plaintext (8 bits)</label>
+            <input type="text" id="sdes-text" placeholder="ex: 10101010" maxlength="8">
+          </div>
+          <div class="field">
+            <label>Key (10 bits)</label>
+            <input type="text" id="sdes-key" placeholder="ex: 1010110011" maxlength="10">
+          </div>
+        </div>
+        <div id="sdes-steps-area" style="display:none;">
+          <div class="sub-label" style="margin: 0.5rem 0 6px;">Step Trace</div>
+          <div class="steps" id="sdes-steps"></div>
+        </div>
+      </div>
+      <div class="cipher-actions">
+        <button class="btn btn-encrypt" onclick="sdesEncrypt()">Encrypt</button>
+        <button class="btn btn-decrypt" onclick="sdesDecrypt()">Decrypt</button>
+        <button class="btn btn-clear" onclick="clearCipher('sdes')">Clear</button>
+      </div>
+      <div class="error-msg" id="sdes-err"></div>
+      <div class="result-area">
+        <div class="result-label">
+          <span>Result</span>
+          <button class="copy-btn" onclick="copyResult('sdes-result')">Copy</button>
+        </div>
+        <div class="result-text" id="sdes-result"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RSA PANEL -->
+  <div class="panel" id="panel-asymmetric">
+    <div class="cipher-card">
+      <div class="cipher-header">
+        <div class="cipher-title-group">
+          <div class="cipher-name">RSA Public-Key Cipher</div>
+          <div class="cipher-desc">Select primes p, q → n = p·q → φ(n) = (p-1)(q-1) → choose e with gcd(e,φ)=1 → find d = e⁻¹ mod φ(n). Encrypt: C = Mᵉ mod n. Decrypt: M = Cᵈ mod n.</div>
+        </div>
+        <span class="cipher-tag tag-asymmetric">Asymmetric</span>
+      </div>
+      <div class="cipher-body">
+        <div class="step-section-label">Step 1 — Key Generation</div>
+        <div class="field-row triple">
+          <div class="field">
+            <label>Prime p</label>
+            <input type="number" id="rsa-p" placeholder="ex: 17">
+          </div>
+          <div class="field">
+            <label>Prime q</label>
+            <input type="number" id="rsa-q" placeholder="ex: 11">
+          </div>
+          <div class="field">
+            <label>Encryption exponent e</label>
+            <input type="number" id="rsa-e" placeholder="ex: 7">
+          </div>
+        </div>
+        <div class="cipher-actions" style="padding: 0 0 1rem;">
+          <button class="btn btn-encrypt" onclick="rsaGenerateKeys()">Generate Keys</button>
+          <button class="btn btn-clear" onclick="clearRSA()">Clear All</button>
+        </div>
+        <div class="error-msg" id="rsa-gen-err" style="padding:0; margin-bottom:0.5rem;"></div>
+        <div id="rsa-keys-area" style="display:none;">
+          <div class="key-pair">
+            <div class="key-box">
+              <div class="key-box-label">Public Key PU = {e, n}</div>
+              <div class="key-box-value" id="rsa-pub"></div>
+            </div>
+            <div class="key-box">
+              <div class="key-box-label">Private Key PR = {d, n}</div>
+              <div class="key-box-value" id="rsa-priv"></div>
+            </div>
+          </div>
+          <div class="steps" id="rsa-keygen-steps" style="margin-bottom:1rem;"></div>
+        </div>
+
+        <hr class="divider">
+        <div class="step-section-label">Step 2 — Encrypt / Decrypt</div>
+        <div class="field-row">
+          <div class="field">
+            <label>Message M (numeric, must be &lt; n)</label>
+            <input type="number" id="rsa-message" placeholder="ex: 88">
+          </div>
+        </div>
+      </div>
+      <div class="cipher-actions">
+        <button class="btn btn-encrypt" onclick="rsaEncrypt()">Encrypt (C = Mᵉ mod n)</button>
+        <button class="btn btn-decrypt" onclick="rsaDecrypt()">Decrypt (M = Cᵈ mod n)</button>
+      </div>
+      <div class="error-msg" id="rsa-err"></div>
+      <div class="result-area">
+        <div class="result-label">
+          <span>Result</span>
+          <button class="copy-btn" onclick="copyResult('rsa-result')">Copy</button>
+        </div>
+        <div class="result-text" id="rsa-result"></div>
+        <div class="steps" id="rsa-op-steps" style="display:none; border-top:1px solid var(--border);"></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- JavaScript Modules -->
+<script src="js/ui.js"></script>
+<script src="js/caesar.js"></script>
+<script src="js/monoalphabetic.js"></script>
+<script src="js/playfair.js"></script>
+<script src="js/transposition.js"></script>
+<script src="js/rc4.js"></script>
+<script src="js/sdes.js"></script>
+<script src="js/rsa.js"></script>
+
+</body>
+</html>
